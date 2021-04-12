@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "WrzKrbdFEVkQv6xNzGcZiDuWIoHFDjnW8HvZhHbrXJK1mlbu0sz+dp8BZMOdCWfl1i1JAnL/tjy+UbFmZeNu0g==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Administrator\\.nuget\\packages\\amazon.lambda.core\\1.2.0\\amazon.lambda.core.1.2.0.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\amazon.lambda.serialization.systemtextjson\\2.1.0\\amazon.lambda.serialization.systemtextjson.2.1.0.nupkg.sha512"
+  ],
+  "logs": []
+}
