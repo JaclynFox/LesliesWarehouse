@@ -1,0 +1,10 @@
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseEmployeeManagement\LesliesWarehouseEmployeeManagement\bin\Release\netcoreapp3.1\publish\LesliesWarehouseEmployeeManagement.dll
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseEmployeeManagement\LesliesWarehouseEmployeeManagement\bin\Release\netcoreapp3.1\publish\LesliesWarehouseEmployeeManagement.deps.json
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseEmployeeManagement\LesliesWarehouseEmployeeManagement\bin\Release\netcoreapp3.1\publish\LesliesWarehouseEmployeeManagement.runtimeconfig.json
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseEmployeeManagement\LesliesWarehouseEmployeeManagement\bin\Release\netcoreapp3.1\publish\LesliesWarehouseEmployeeManagement.pdb
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseEmployeeManagement\LesliesWarehouseEmployeeManagement\bin\Release\netcoreapp3.1\publish\Amazon.Lambda.APIGatewayEvents.dll
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseEmployeeManagement\LesliesWarehouseEmployeeManagement\bin\Release\netcoreapp3.1\publish\Amazon.Lambda.Core.dll
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseEmployeeManagement\LesliesWarehouseEmployeeManagement\bin\Release\netcoreapp3.1\publish\Amazon.Lambda.Serialization.SystemTextJson.dll
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseEmployeeManagement\LesliesWarehouseEmployeeManagement\bin\Release\netcoreapp3.1\publish\AWSSDK.Core.dll
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseEmployeeManagement\LesliesWarehouseEmployeeManagement\bin\Release\netcoreapp3.1\publish\AWSSDK.DynamoDBv2.dll
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseEmployeeManagement\LesliesWarehouseEmployeeManagement\bin\Release\netcoreapp3.1\publish\Newtonsoft.Json.dll
