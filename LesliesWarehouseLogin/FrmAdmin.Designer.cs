@@ -42,6 +42,11 @@
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button_WOC1 = new ePOSOne.btnProduct.Button_WOC();
             this.button_WOC2 = new ePOSOne.btnProduct.Button_WOC();
+            this.AdminNameLbl = new System.Windows.Forms.Label();
+            this.AdminLbl = new System.Windows.Forms.Label();
+            this.LogoutBtn = new System.Windows.Forms.Button();
+            this.PunchInBtn = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // LabelAdmin
@@ -169,12 +174,70 @@
             this.button_WOC2.TextColor = System.Drawing.Color.Black;
             this.button_WOC2.UseVisualStyleBackColor = false;
             // 
+            // AdminNameLbl
+            // 
+            this.AdminNameLbl.AutoSize = true;
+            this.AdminNameLbl.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.AdminNameLbl.Location = new System.Drawing.Point(40, 38);
+            this.AdminNameLbl.Name = "AdminNameLbl";
+            this.AdminNameLbl.Size = new System.Drawing.Size(73, 13);
+            this.AdminNameLbl.TabIndex = 8;
+            this.AdminNameLbl.Text = "Admin Name: ";
+            // 
+            // AdminLbl
+            // 
+            this.AdminLbl.AutoSize = true;
+            this.AdminLbl.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.AdminLbl.Location = new System.Drawing.Point(119, 38);
+            this.AdminLbl.Name = "AdminLbl";
+            this.AdminLbl.Size = new System.Drawing.Size(76, 13);
+            this.AdminLbl.TabIndex = 9;
+            this.AdminLbl.Text = "name of admin";
+            // 
+            // LogoutBtn
+            // 
+            this.LogoutBtn.BackColor = System.Drawing.Color.Red;
+            this.LogoutBtn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.LogoutBtn.Location = new System.Drawing.Point(1248, 38);
+            this.LogoutBtn.Name = "LogoutBtn";
+            this.LogoutBtn.Size = new System.Drawing.Size(75, 23);
+            this.LogoutBtn.TabIndex = 10;
+            this.LogoutBtn.Text = "Log Out";
+            this.LogoutBtn.UseVisualStyleBackColor = false;
+            // 
+            // PunchInBtn
+            // 
+            this.PunchInBtn.BackColor = System.Drawing.Color.Transparent;
+            this.PunchInBtn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.PunchInBtn.Location = new System.Drawing.Point(43, 116);
+            this.PunchInBtn.Name = "PunchInBtn";
+            this.PunchInBtn.Size = new System.Drawing.Size(75, 23);
+            this.PunchInBtn.TabIndex = 11;
+            this.PunchInBtn.Text = "Punch In";
+            this.PunchInBtn.UseVisualStyleBackColor = false;
+            // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.Color.Transparent;
+            this.button2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.button2.Location = new System.Drawing.Point(43, 162);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 12;
+            this.button2.Text = "Break";
+            this.button2.UseVisualStyleBackColor = false;
+            // 
             // FrmAdmin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.ClientSize = new System.Drawing.Size(1365, 832);
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(1365, 788);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.PunchInBtn);
+            this.Controls.Add(this.LogoutBtn);
+            this.Controls.Add(this.AdminLbl);
+            this.Controls.Add(this.AdminNameLbl);
             this.Controls.Add(this.button_WOC2);
             this.Controls.Add(this.button_WOC1);
             this.Controls.Add(this.listView1);
@@ -207,5 +270,10 @@
         private System.Windows.Forms.ColumnHeader columnHeader8;
         private ePOSOne.btnProduct.Button_WOC button_WOC1;
         private ePOSOne.btnProduct.Button_WOC button_WOC2;
+        private System.Windows.Forms.Label AdminNameLbl;
+        private System.Windows.Forms.Label AdminLbl;
+        private System.Windows.Forms.Button LogoutBtn;
+        private System.Windows.Forms.Button PunchInBtn;
+        private System.Windows.Forms.Button button2;
     }
 }
