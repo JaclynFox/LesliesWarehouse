@@ -1,27 +1,44 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-
 using Amazon.Lambda.Core;
+using Amazon.Lambda.APIGatewayEvents;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.Model;
+using Amazon.DynamoDBv2.DocumentModel;
+using Newtonsoft.Json;
 
-// Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
 namespace LesliesWarehouseLoginAPI
 {
     public class Function
     {
-        
-        /// <summary>
-        /// A simple function that takes a string and does a ToUpper
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public string FunctionHandler(string input, ILambdaContext context)
+        private static AmazonDynamoDBClient client = new AmazonDynamoDBClient();
+        private String empTable = "LesliesWarehouseEmployees";
+        public async Task<Employee> FunctionHandler(APIGatewayProxyRequest input, ILambdaContext context)
         {
-            return input?.ToUpper();
+            LoginRequest lr = JsonConvert.DeserializeObject<LoginRequest>(input.Body);
+            Employee emp = await CheckUserPass(lr);
+            if (emp.Request == "good")
+                return emp;
+            else
+                return new Employee("Invalid ID or password", 0, null, null, null, null);
+        }
+        public async Task<Employee> CheckUserPass(LoginRequest lr)
+        {
+            GetItemResponse res = await client.GetItemAsync(empTable, new Dictionary<string, AttributeValue>
+                {
+                    { "empID", new AttributeValue {N = lr.EmpID.ToString()} }
+                });
+            Employee emp = JsonConvert.DeserializeObject<Employee>(Document.FromAttributeMap(res.Item).ToJson());
+            if (emp.EmpID.Equals(lr.EmpID) && emp.Password.Equals(lr.Password))
+            {
+                emp.Request = "good";
+                return emp;
+            }
+            else
+                return new Employee("Invalid username or password", 0, null, null, null, null);
         }
     }
 }

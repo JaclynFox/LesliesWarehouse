@@ -5,7 +5,6 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using Amazon.DynamoDBv2.DocumentModel;
 using Newtonsoft.Json;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
@@ -24,7 +23,7 @@ namespace LesliesWarehouseEmployeeManagement
             List<Employee> employees = new List<Employee>();
             if (emp.Request == "put")
             {
-                EditEmployee(emp);
+                await EditEmployee(emp);
             }
             else if (emp.Request == "delete")
             {
@@ -33,15 +32,17 @@ namespace LesliesWarehouseEmployeeManagement
             if (del == String.Empty || del == "success")
                 employees = await GetEmployees();
             else
-                employees.Add(new Employee("Employee not found", 0, null, null));
+                employees.Add(new Employee("Employee not found", 0, null, null, null, null));
             return employees;
         }
-        public async void EditEmployee(Employee emp)
+        public async Task EditEmployee(Employee emp)
         {
             Dictionary<String, AttributeValue> dict = new Dictionary<string, AttributeValue>();
             dict["empID"] = new AttributeValue { N = emp.EmpID.ToString() };
             dict["name"] = new AttributeValue { S = emp.Name };
             dict["title"] = new AttributeValue { S = emp.Title };
+            dict["password"] = new AttributeValue { S = emp.Password };
+            dict["type"] = new AttributeValue { S = emp.Type };
             PutItemRequest req = new PutItemRequest(tablename, dict);
             await client.PutItemAsync(req);
         }
@@ -64,6 +65,7 @@ namespace LesliesWarehouseEmployeeManagement
             attributes.Add("empID");
             attributes.Add("name");
             attributes.Add("title");
+            attributes.Add("password");
             do
             {
                 ScanRequest req = new ScanRequest
@@ -74,7 +76,9 @@ namespace LesliesWarehouseEmployeeManagement
                 };
                 ScanResponse res = await client.ScanAsync(tablename, attributes);
                 foreach (Dictionary<String, AttributeValue> item in res.Items)
-                    employees.Add(new Employee(int.Parse(item["empID"].N.ToString()), item["name"].S, item["title"].S));
+                {
+                    employees.Add(new Employee(int.Parse(item["empID"].N.ToString()), item["name"].S, item["title"].S, item["password"].S));
+                }
             } while (lastKeyEvaluated != null && lastKeyEvaluated.Count != 0);
             return employees;
         }
