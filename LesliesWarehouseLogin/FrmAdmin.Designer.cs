@@ -61,6 +61,7 @@
             // 
             // ButtonAdminRefresh
             // 
+            this.ButtonAdminRefresh.ForeColor = System.Drawing.SystemColors.WindowText;
             this.ButtonAdminRefresh.Location = new System.Drawing.Point(266, 677);
             this.ButtonAdminRefresh.Name = "ButtonAdminRefresh";
             this.ButtonAdminRefresh.Size = new System.Drawing.Size(106, 40);
@@ -70,7 +71,8 @@
             // 
             // ButtonAdminReport
             // 
-            this.ButtonAdminReport.Location = new System.Drawing.Point(1194, 699);
+            this.ButtonAdminReport.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.ButtonAdminReport.Location = new System.Drawing.Point(1202, 713);
             this.ButtonAdminReport.Name = "ButtonAdminReport";
             this.ButtonAdminReport.Size = new System.Drawing.Size(104, 28);
             this.ButtonAdminReport.TabIndex = 3;
@@ -79,7 +81,7 @@
             // 
             // ListViewEmployeeTime
             // 
-            this.ListViewEmployeeTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.ListViewEmployeeTime.BackColor = System.Drawing.Color.White;
             this.ListViewEmployeeTime.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.ListViewEmployeeTime.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
@@ -139,11 +141,11 @@
             // 
             this.LabelAdminName.AutoSize = true;
             this.LabelAdminName.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.LabelAdminName.Location = new System.Drawing.Point(568, 24);
+            this.LabelAdminName.Location = new System.Drawing.Point(524, 20);
             this.LabelAdminName.Name = "LabelAdminName";
-            this.LabelAdminName.Size = new System.Drawing.Size(73, 13);
+            this.LabelAdminName.Size = new System.Drawing.Size(92, 13);
             this.LabelAdminName.TabIndex = 8;
-            this.LabelAdminName.Text = "Admin Name: ";
+            this.LabelAdminName.Text = "Welcome {Admin}";
             // 
             // LogoutBtn
             // 
