@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI.csproj": {}
+    "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehousePunchAPI\\LesliesWarehousePunchAPI\\LesliesWarehousePunchAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI.csproj": {
+    "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehousePunchAPI\\LesliesWarehousePunchAPI\\LesliesWarehousePunchAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI.csproj",
-        "projectName": "LesliesWarehouseLoginAPI",
-        "projectPath": "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI.csproj",
+        "projectUniqueName": "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehousePunchAPI\\LesliesWarehousePunchAPI\\LesliesWarehousePunchAPI.csproj",
+        "projectName": "LesliesWarehousePunchAPI",
+        "projectPath": "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehousePunchAPI\\LesliesWarehousePunchAPI\\LesliesWarehousePunchAPI.csproj",
         "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehouseLoginAPI\\LesliesWarehouseLoginAPI\\obj\\",
+        "outputPath": "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehousePunchAPI\\LesliesWarehousePunchAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -42,7 +42,7 @@
           "dependencies": {
             "AWSSDK.DynamoDBv2": {
               "target": "Package",
-              "version": "[3.7.0.13, )"
+              "version": "[3.7.0.14, )"
             },
             "Amazon.Lambda.APIGatewayEvents": {
               "target": "Package",
@@ -50,7 +50,7 @@
             },
             "Amazon.Lambda.Core": {
               "target": "Package",
-              "version": "[1.2.0, )"
+              "version": "[2.0.0, )"
             },
             "Amazon.Lambda.Serialization.SystemTextJson": {
               "target": "Package",

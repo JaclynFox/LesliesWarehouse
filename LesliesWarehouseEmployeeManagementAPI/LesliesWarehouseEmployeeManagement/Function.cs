@@ -66,6 +66,7 @@ namespace LesliesWarehouseEmployeeManagement
             attributes.Add("name");
             attributes.Add("title");
             attributes.Add("password");
+            attributes.Add("type");
             do
             {
                 ScanRequest req = new ScanRequest
@@ -77,7 +78,7 @@ namespace LesliesWarehouseEmployeeManagement
                 ScanResponse res = await client.ScanAsync(tablename, attributes);
                 foreach (Dictionary<String, AttributeValue> item in res.Items)
                 {
-                    employees.Add(new Employee(int.Parse(item["empID"].N.ToString()), item["name"].S, item["title"].S, item["password"].S));
+                    employees.Add(new Employee(int.Parse(item["empID"].N.ToString()), item["name"].S, item["title"].S, item["password"].S, item["type"].S));
                 }
             } while (lastKeyEvaluated != null && lastKeyEvaluated.Count != 0);
             return employees;
