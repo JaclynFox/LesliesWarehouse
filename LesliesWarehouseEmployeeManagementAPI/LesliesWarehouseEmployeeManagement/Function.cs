@@ -42,7 +42,7 @@ namespace LesliesWarehouseEmployeeManagement
             dict["name"] = new AttributeValue { S = emp.Name };
             dict["title"] = new AttributeValue { S = emp.Title };
             dict["password"] = new AttributeValue { S = emp.Password };
-            dict["type"] = new AttributeValue { S = emp.Type };
+            dict["empType"] = new AttributeValue { S = emp.EmpType };
             PutItemRequest req = new PutItemRequest(tablename, dict);
             await client.PutItemAsync(req);
         }
@@ -66,7 +66,7 @@ namespace LesliesWarehouseEmployeeManagement
             attributes.Add("name");
             attributes.Add("title");
             attributes.Add("password");
-            attributes.Add("type");
+            attributes.Add("empType");
             do
             {
                 ScanRequest req = new ScanRequest
@@ -78,7 +78,7 @@ namespace LesliesWarehouseEmployeeManagement
                 ScanResponse res = await client.ScanAsync(tablename, attributes);
                 foreach (Dictionary<String, AttributeValue> item in res.Items)
                 {
-                    employees.Add(new Employee(int.Parse(item["empID"].N.ToString()), item["name"].S, item["title"].S, item["password"].S, item["type"].S));
+                    employees.Add(new Employee(int.Parse(item["empID"].N.ToString()), item["name"].S, item["title"].S, item["password"].S, item["empType"].S));
                 }
             } while (lastKeyEvaluated != null && lastKeyEvaluated.Count != 0);
             return employees;

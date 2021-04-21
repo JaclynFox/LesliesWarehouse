@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "sVs/fOQUjXr8kwsy7Eu/iQYpOrxEsal0nX+RMz2itd9DfaIWmXj0FCwIv1uo8VB0O1uM3Cy2x8MPk3Rw1p+z7g==",
+  "dgSpecHash": "tN0uCIYhJxxTH8qwmRiWAXSNLl+pA9k/2SZijgGkIAtPzr5s3PW9UdL5L3VULyWFnEj76H3FEutYht0dVsAPpg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehouseEmployeeManagement\\LesliesWarehouseEmployeeManagement\\LesliesWarehouseEmployeeManagement.csproj",
+  "projectFilePath": "C:\\Users\\Administrator\\source\\repos\\LesliesWarehouse\\LesliesWarehouseEmployeeManagementAPI\\LesliesWarehouseEmployeeManagement\\LesliesWarehouseEmployeeManagement.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Administrator\\.nuget\\packages\\amazon.lambda.apigatewayevents\\2.4.0\\amazon.lambda.apigatewayevents.2.4.0.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\amazon.lambda.core\\1.2.0\\amazon.lambda.core.1.2.0.nupkg.sha512",
