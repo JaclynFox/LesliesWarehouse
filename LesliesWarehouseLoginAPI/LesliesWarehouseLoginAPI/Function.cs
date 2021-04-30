@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 
 namespace LesliesWarehouseLoginAPI
 {
+    /*This function is simply for logging in. It accepts a LoginRequest object and then checks the loginID and password. 
+     * If the combination is good, it returns the employee. If the combination is bad, it returns an empty employee with 
+     * the request type of "Invalid ID or password." */
     public class Function
     {
         private static AmazonDynamoDBClient client = new AmazonDynamoDBClient();
@@ -23,40 +26,51 @@ namespace LesliesWarehouseLoginAPI
             if (emp.Request == "good")
                 return emp;
             else
-                return new Employee("Invalid ID or password", 0, null, null, null, null);
+                return new Employee("Invalid ID or password", null, null, null, null, null, null);
         }
+        /* This method does the actual logic for checking if the combination of loginID and password are correct.
+         * It currently only is called once, but I made it a method for ease of future development.
+         * Currently, due to limitations within dynamo, it has to use the most inefficient way of retrieving the 
+         * information by doing a scan and then filtering the information. Filtering within the API or serverside 
+         * using the filter argument doesn't matter as it is the same amount of read actions. This can be solved
+         * by shuffling some of the information to a different table. I will at a later date shuffle that info to a
+         * new table and modify references to fix the issue. */
         public async Task<Employee> CheckUserPass(LoginRequest lr)
         {
             Dictionary<string, AttributeValue> lastKeyEvaluated = null;
             List<Employee> employees = new List<Employee>();
+            Employee returns = null;
+            List<String> attributes = new List<string>();
+            attributes.Add("empID");
+            attributes.Add("name");
+            attributes.Add("title");
+            attributes.Add("password");
+            attributes.Add("empType");
+            attributes.Add("loginID");
             do
             {
-                QueryRequest req = new QueryRequest
+                ScanRequest req = new ScanRequest
                 {
                     TableName = empTable,
                     Limit = 10,
-                    KeyConditionExpression = "loginID = :v_loginID",
-                    ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
-                        {":v_loginID", new AttributeValue { S =  lr.LoginID }}},
                     ExclusiveStartKey = lastKeyEvaluated
                 };
-                QueryResponse res = await client.QueryAsync(req);
+                ScanResponse res = await client.ScanAsync(empTable, attributes);
                 foreach (Dictionary<String, AttributeValue> item in res.Items)
                 {
                     employees.Add(new Employee(item["empID"].S, item["name"].S, item["title"].S, item["password"].S, item["empType"].S, item["loginID"].S));
                 }
             } while (lastKeyEvaluated != null && lastKeyEvaluated.Count != 0);
-
-  /*          GetItemResponse res = await client.GetItemAsync(empTable, new Dictionary<string, AttributeValue>
-                {
-                    { "loginID", new AttributeValue {S = lr.LoginID} }
-                });*/
-            Employee emp = JsonConvert.DeserializeObject<Employee>(Document.FromAttributeMap(res.Item).ToJson());
-            if (emp.EmpID.Equals(lr.EmpID) && emp.Password.Equals(lr.Password))
+            foreach (Employee e in employees)
             {
-                emp.Request = "good";
-                return emp;
+                if (e.LoginID == lr.LoginID && e.Password == lr.Password)
+                {
+                    returns = new Employee("good", e.EmpID, e.Name, e.Title, e.Password, e.EmpType, e.LoginID);
+                    break;
+                }
             }
+            if (returns != null)
+                return returns;
             else
                 return new Employee("Invalid username or password", null, null, null, null, null, null);
         }
