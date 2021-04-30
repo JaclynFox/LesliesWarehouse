@@ -165,8 +165,32 @@ namespace LesliesWarehousePunchAPI
             {
                 { "empID", new AttributeValue {S = empID} }
             });
-            PunchRecord pr = JsonConvert.DeserializeObject<PunchRecord>(Document.FromAttributeMap(res.Item).ToJson());
-            return pr;
+            string[] datetimestring = res.Item["lastPunch"].S.Split(' ');
+            QueryResponse qres = await client.QueryAsync(new QueryRequest
+            {
+                TableName = punchTable,
+                KeyConditionExpression = "punchDate = :v_punchDate AND punchTime = :v_punchTime",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
+                { ":v_punchDate", new AttributeValue { S = datetimestring[0] }},
+                { ":v_punchTime", new AttributeValue { S = datetimestring[1] + " " + datetimestring[2] }}}
+            });
+            if (qres.Items.Count > 0)
+            {
+                PunchRecord pr = new PunchRecord();
+                foreach (Dictionary<string, AttributeValue> i in qres.Items)
+                {
+                    AttributeValue date, time, eID, type, flag;
+                    i.TryGetValue("punchDate", out date);
+                    i.TryGetValue("punchTime", out time);
+                    i.TryGetValue("empID", out eID);
+                    i.TryGetValue("punchType", out type);
+                    i.TryGetValue("flag", out flag);
+                    pr = new PunchRecord(date.S, time.S, eID.S, type.S, flag.S);
+                }
+                return pr;
+            }
+            else
+                return new PunchRecord();
         }
     }
 }
