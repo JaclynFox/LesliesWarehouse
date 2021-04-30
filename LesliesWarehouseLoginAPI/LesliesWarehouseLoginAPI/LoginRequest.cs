@@ -7,14 +7,13 @@ namespace LesliesWarehouseLoginAPI
 {
     public class LoginRequest
     {
-        private int _empID;
-        private string _password;
-        public int EmpID { get => _empID; set => _empID = value; }
+        private string _loginID, _password;
+        public string LoginID { get => _loginID; set => _loginID = value; }
         public string Password { get => _password; set => _password = value; }
         [JsonConstructor]
-        public LoginRequest(int id, string p)
+        public LoginRequest(string id, string p)
         {
-            EmpID = id;
+            LoginID = id;
             Password = p;
         }
     }

@@ -27,10 +27,30 @@ namespace LesliesWarehouseLoginAPI
         }
         public async Task<Employee> CheckUserPass(LoginRequest lr)
         {
-            GetItemResponse res = await client.GetItemAsync(empTable, new Dictionary<string, AttributeValue>
+            Dictionary<string, AttributeValue> lastKeyEvaluated = null;
+            List<Employee> employees = new List<Employee>();
+            do
+            {
+                QueryRequest req = new QueryRequest
                 {
-                    { "empID", new AttributeValue {N = lr.EmpID.ToString()} }
-                });
+                    TableName = empTable,
+                    Limit = 10,
+                    KeyConditionExpression = "loginID = :v_loginID",
+                    ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
+                        {":v_loginID", new AttributeValue { S =  lr.LoginID }}},
+                    ExclusiveStartKey = lastKeyEvaluated
+                };
+                QueryResponse res = await client.QueryAsync(req);
+                foreach (Dictionary<String, AttributeValue> item in res.Items)
+                {
+                    employees.Add(new Employee(item["empID"].S, item["name"].S, item["title"].S, item["password"].S, item["empType"].S, item["loginID"].S));
+                }
+            } while (lastKeyEvaluated != null && lastKeyEvaluated.Count != 0);
+
+  /*          GetItemResponse res = await client.GetItemAsync(empTable, new Dictionary<string, AttributeValue>
+                {
+                    { "loginID", new AttributeValue {S = lr.LoginID} }
+                });*/
             Employee emp = JsonConvert.DeserializeObject<Employee>(Document.FromAttributeMap(res.Item).ToJson());
             if (emp.EmpID.Equals(lr.EmpID) && emp.Password.Equals(lr.Password))
             {
@@ -38,7 +58,7 @@ namespace LesliesWarehouseLoginAPI
                 return emp;
             }
             else
-                return new Employee("Invalid username or password", 0, null, null, null, null);
+                return new Employee("Invalid username or password", null, null, null, null, null, null);
         }
     }
 }
