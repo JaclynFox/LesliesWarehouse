@@ -7,18 +7,19 @@ namespace LesliesWarehousePunchAPI
 {
     public class PunchRecord
     {
-        private string _punchID, _empID, _datetime, _punchType, _flag;
-        public string PunchID { get => _punchID; set => _punchID = value; }
+        //Simply a data class for the punch records in the database.
+        private string _punchDate, _punchTime, _empID, _punchType, _flag;
+        public string PunchTime { get => _punchTime; set => _punchTime = value; }
         public string EmpID { get => _empID; set => _empID = value; }
-        public string Datetime { get => _datetime; set => _datetime = value; }
+        public string PunchDate { get => _punchDate; set => _punchDate = value; }
         public string PunchType { get => _punchType; set => _punchType = value; }
         public string Flag { get => _flag; set => _flag = value; }
         [JsonConstructor]
-        public PunchRecord(string pid, string e, string d, string p, string f)
+        public PunchRecord(string d, string t, string e, string p, string f)
         {
-            PunchID = pid;
+            PunchDate = d;
+            PunchTime = t;
             EmpID = e;
-            Datetime = d;
             PunchType = p;
             Flag = f;
         }
