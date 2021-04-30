@@ -5,7 +5,9 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using System.Globalization;
+using Amazon.DynamoDBv2.DocumentModel;
+using Newtonsoft.Json;
+
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
@@ -15,14 +17,15 @@ namespace LesliesWarehousePunchAPI
     public class Function
     {
         private static AmazonDynamoDBClient client = new AmazonDynamoDBClient();
-        private String table = "LesliesWarehousePunches";
+        private String punchTable = "LesliesWarehousePunches", lastPunchTable = "LesliesWarehouseLastPunches";
         public async Task<List<PunchRecord>> FunctionHandler(APIGatewayProxyRequest input, ILambdaContext context)
         {
             Dictionary<string, string> iparams = (Dictionary<string, string>)input.QueryStringParameters;
             string request = string.Empty, punchDate = string.Empty, punchTime = string.Empty, empID = string.Empty, punchType = string.Empty;
             iparams.TryGetValue("request", out request);
             List<PunchRecord> punches = new List<PunchRecord>();
-            //Switch checks which of the three cases you have: admin, update a punch, or the default; add a punch
+            /*Switch checks which of the four cases you have: admin, update a punch, get last punch,
+             * or the default; add a punch. */
             switch (request)
             {
                 case "admin":
@@ -35,6 +38,10 @@ namespace LesliesWarehousePunchAPI
                     iparams.TryGetValue("empID", out empID);
                     iparams.TryGetValue("punchType", out punchType);
                     punches.Add(await UpdatePunch(punchDate, punchTime, empID, punchType));
+                    break;
+                case "get":
+                    iparams.TryGetValue("empID", out empID);
+                    punches.Add(await GetLastPunch(empID));
                     break;
                 default:
                     iparams.TryGetValue("empID", out empID);
@@ -53,7 +60,7 @@ namespace LesliesWarehousePunchAPI
             {
                 QueryRequest req = new QueryRequest
                 {
-                    TableName = table,
+                    TableName = punchTable,
                     Limit = 10,
                     KeyConditionExpression = "punchDate = :v_punchDate",
                     ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
@@ -76,63 +83,49 @@ namespace LesliesWarehousePunchAPI
             attr["punchTime"] = new AttributeValue { S = punchTime };
             attr["empID"] = new AttributeValue { S = empID };
             attr["punchType"] = new AttributeValue { S = punchType };
-            attr["flag"] = new AttributeValue { S = await CheckForFlag(punchDate, punchTime, empID, punchType) };
-            PutItemRequest req = new PutItemRequest(table, attr);
+            attr["flag"] = new AttributeValue { S = await CheckForFlag(empID, punchType) };
+            PutItemRequest req = new PutItemRequest(punchTable, attr);
             PutItemResponse res = await client.PutItemAsync(req);
+            PunchRecord pr = await GetLastPunch(empID);
+            if (DateTime.Parse(punchDate + " " + punchTime) >= DateTime.Parse(pr.PunchDate + " " + pr.PunchTime))
+            {
+                Dictionary<string, AttributeValue> attrr = new Dictionary<string, AttributeValue>();
+                attrr["empID"] = attr["empID"];
+                attrr["lastPunch"] = new AttributeValue { S = punchDate + " " + punchTime };
+                req = new PutItemRequest(lastPunchTable, attrr);
+                res = await client.PutItemAsync(req);
+            }
             return new PunchRecord(attr["punchDate"].S, attr["punchTime"].S, attr["empID"].S, attr["punchType"].S, attr["flag"].S);
         }
         //This method adds a punch and returns a PunchRecord representation of what was added.
         public async Task<PunchRecord> Punch(string empID, string punchType)
         {
             string[] datestring = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt").Split(' ');
-            Dictionary<string, AttributeValue> attr = new Dictionary<string, AttributeValue>();
+            Dictionary<string, AttributeValue> attr = new Dictionary<string, AttributeValue>(), attrr = new Dictionary<string, AttributeValue>();
             attr["punchDate"] = new AttributeValue { S = datestring[0] };
             attr["punchTime"] = new AttributeValue { S = datestring[1] + " " + datestring[2] };
             attr["empID"] = new AttributeValue { S = empID };
             attr["punchType"] = new AttributeValue { S = punchType };
-            attr["flag"] = new AttributeValue { S = await CheckForFlag(datestring[0], datestring[1] + " " + datestring[2], empID, punchType) };
-            PutItemRequest req = new PutItemRequest(table, attr);
+            attr["flag"] = new AttributeValue { S = await CheckForFlag(empID, punchType) };
+            attrr["empID"] = attr["empID"];
+            attrr["lastPunch"] = new AttributeValue { S = datestring[0] + " " + datestring[1] + " " + datestring[2] };
+            PutItemRequest req = new PutItemRequest(punchTable, attr);
             PutItemResponse res = await client.PutItemAsync(req);
+            req = new PutItemRequest(lastPunchTable, attrr);
+            res = await client.PutItemAsync(req);
             return new PunchRecord(attr["punchDate"].S, attr["punchTime"].S, attr["empID"].S, attr["punchType"].S, attr["flag"].S);
         }
-        /* This method checks whether the punch should be flagged or not. It does this by first checking if you have
-         * any other punches for the date sent to it. If you have an earlier punch today then it checks for flags.
-         * If you have not clocked in, it flags it if you clock out. If you have not clocked out for lunch, it
-         * flags you for clocking in from lunch, etc. */
-        public async Task<string> CheckForFlag(string punchDate, string punchTime, string empID, string punchType)
+        /* This method checks whether the punch should be flagged or not. It does this by first checking what your
+         * last punch is. If you have not clocked in, it flags it if you clock out. If you have not clocked out 
+         * for lunch, it flags you for clocking in from lunch, etc. */
+        public async Task<string> CheckForFlag(string empID, string punchType)
         {
             string flag = string.Empty;
-            Dictionary<string, AttributeValue> lastKeyEvaluated = null;
-            List<PunchRecord> punches = new List<PunchRecord>();
-            do
-            {
-                QueryRequest req = new QueryRequest
-                {
-                    TableName = table,
-                    Limit = 10,
-                    KeyConditionExpression = "punchDate = :v_punchDate",
-                    ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
-                        {":v_punchDate", new AttributeValue { S =  punchDate }}},
-                    ExclusiveStartKey = lastKeyEvaluated
-                };
-                QueryResponse res = await client.QueryAsync(req);
-                foreach (Dictionary<String, AttributeValue> item in res.Items)
-                {
-                    punches.Add(new PunchRecord(item["punchDate"].S, item["punchTime"].S, item["empID"].S, item["punchType"].S, item["flag"].S));
-                }
-            } while (lastKeyEvaluated != null && lastKeyEvaluated.Count != 0);
-            PunchRecord punchRecord = new PunchRecord();
-            DateTime d = DateTime.MinValue;
-            foreach (PunchRecord pr in punches)
-                if (empID == pr.EmpID && d < DateTime.Parse(pr.PunchDate + " " + pr.PunchTime))
-                {
-                    d = DateTime.Parse(pr.PunchDate + " " + pr.PunchTime);
-                    punchRecord = pr;
-                }
-            if (d == DateTime.MinValue)
+            PunchRecord pr = await GetLastPunch(empID);
+            if (string.IsNullOrEmpty(pr.EmpID))
                 flag = "no";
             else
-                switch (punchRecord.PunchType)
+                switch (pr.PunchType)
                 {
                     case "out":
                         if (punchType == "in" || punchType == "lunchin")
@@ -163,6 +156,17 @@ namespace LesliesWarehousePunchAPI
                         break;
                 }
             return flag;
+        }
+        /*This simply retrieves the employee's last punch which is stored in a separate table to save time
+         * and cut down on read requests. */
+        public async Task<PunchRecord> GetLastPunch(string empID)
+        {
+            GetItemResponse res = await client.GetItemAsync(lastPunchTable, new Dictionary<string, AttributeValue>
+            {
+                { "empID", new AttributeValue {S = empID} }
+            });
+            PunchRecord pr = JsonConvert.DeserializeObject<PunchRecord>(Document.FromAttributeMap(res.Item).ToJson());
+            return pr;
         }
     }
 }

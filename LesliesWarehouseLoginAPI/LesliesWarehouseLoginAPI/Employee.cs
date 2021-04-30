@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Globalization;
 using Newtonsoft.Json;
 
 namespace LesliesWarehouseLoginAPI
@@ -44,7 +41,7 @@ namespace LesliesWarehouseLoginAPI
         //Constructor for making a new employee record. This constructor programatically creates the empID field. This constructor is only to be used when you need to add a new employee record to the database.
         public Employee(string n, string t, string p, string type, string l)
         {
-            string datestring = DateTime.Now.ToString("G", CultureInfo.CreateSpecificCulture("en-us"));
+            string datestring = DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt");
             EmpID = n + " " + datestring;
             Name = n;
             Title = t;
