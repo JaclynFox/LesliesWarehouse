@@ -40,6 +40,8 @@ namespace LesliesWarehouseEmployeeManagement
             {
                 del = await DeleteEmployee(emp);
             }
+            else
+                del = string.Empty;
             if (del == String.Empty || del == "success")
                 employees = await GetEmployees();
             else
