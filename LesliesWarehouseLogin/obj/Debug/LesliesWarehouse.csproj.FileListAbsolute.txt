@@ -46,3 +46,4 @@ C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseLogin\obj\D
 C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseLogin\obj\Debug\LesliesWarehouse.csproj.CopyComplete
 C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseLogin\obj\Debug\LesliesWarehouse.exe
 C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseLogin\obj\Debug\LesliesWarehouse.pdb
+C:\Users\Administrator\source\repos\LesliesWarehouse\LesliesWarehouseLogin\obj\Debug\LesliesWarehouse.FrmSplash.resources

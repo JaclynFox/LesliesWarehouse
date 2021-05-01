@@ -15,6 +15,7 @@ namespace LesliesWarehouse
 {
     public partial class FrmLogin : Form
     {
+        public Employee emp = new Employee();
         static readonly HttpClient client = new HttpClient();
         public FrmLogin()
         {
@@ -26,29 +27,41 @@ namespace LesliesWarehouse
             bool valid = ValidateFields();
             if (valid == true)
             {
-                Employee emp = await CheckLogin(TextBoxLogin.Text, TextBoxPassword.Text);
-                MessageBox.Show(TextBoxPassword.Text);
+                emp = await CheckLogin(TextBoxLogin.Text, TextBoxPassword.Text);
                 if (emp.Request != "Invalid ID or password")
                 {
-                    PunchRecord pr = await Punch(emp, "get");
-                    switch (pr.PunchType)
+                    if (emp.EmpType == "admin")
                     {
-                        case "out":
-                            await Punch(emp, "in");
-                            MessageBox.Show("You have been clocked in", "Welcome", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            break;
-                        case "lunchout":
-                            await Punch(emp, "lunchin");
-                            MessageBox.Show("Welcome back from lunch. You have been clocked in.", "Back From Lunch", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            break;
-                        default:
-                            MessageBox.Show("Why are you here?");
-                            break;
+                        FrmAdmin frmAdmin = new FrmAdmin(this);
+                        this.Hide();
+                        frmAdmin.Show();
+                    }
+                    else
+                    {
+                        PunchRecord pr = await Punch(emp, "get");
+                        switch (pr.PunchType)
+                        {
+                            case "out":
+                                await Punch(emp, "in");
+                                MessageBox.Show("You have been clocked in", "Welcome", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                break;
+                            case "lunchout":
+                                await Punch(emp, "lunchin");
+                                MessageBox.Show("Welcome back from lunch. You have been clocked in.", "Back From Lunch", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                break;
+                            default:
+                                FrmEmployee frmEmployee = new FrmEmployee(this);
+                                this.Hide();
+                                frmEmployee.Show();
+                                break;
+                        }
                     }
                 }
                 else
-                    MessageBox.Show("Bad username or password, bruh");
+                    MessageBox.Show("Bad username or password");
             }
+            TextBoxLogin.Text = "";
+            TextBoxPassword.Text = "";
         }
         private bool ValidateFields()
         {
@@ -57,8 +70,10 @@ namespace LesliesWarehouse
                 returns = false;
             return returns;
         }
-        private async Task<PunchRecord> Punch(Employee emp, string type)
+        public async Task<PunchRecord> Punch(Employee emp, string type)
         {
+            FrmSplash splash = new FrmSplash();
+            splash.Show();
             string urlstring = "https://56w4zz9yr2.execute-api.us-west-2.amazonaws.com/LoginAndPunch";
             urlstring += "?&request=" + type;
             urlstring += "&empID=" + emp.EmpID;
@@ -69,20 +84,20 @@ namespace LesliesWarehouse
                 RequestUri = new Uri(urlstring)
             };
             HttpResponseMessage res = await client.SendAsync(req);
-            string teststring = await res.Content.ReadAsStringAsync();
-            MessageBox.Show(teststring);
             List<PunchRecord> pr = JsonConvert.DeserializeObject<List<PunchRecord>>(await res.Content.ReadAsStringAsync());
+            splash.Close();
             return pr[0];
         }
-        private async Task<Employee> CheckLogin(string un, string pw)
+        public async Task<Employee> CheckLogin(string un, string pw)
         {
+            FrmSplash splash = new FrmSplash();
+            splash.Show();
             byte[] hash = new byte[128];
             byte[] salt = new byte[64];
             var passthing = new Rfc2898DeriveBytes(pw, salt, 10000);
             hash = passthing.GetBytes(128);
             string password = Convert.ToBase64String(hash);
             string contentString = "{\"loginID\":\"" + un + "\",\"password\":\"" + password + "\"}";
-            MessageBox.Show(password + "\n\n" + contentString);
             HttpRequestMessage req = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
@@ -91,6 +106,7 @@ namespace LesliesWarehouse
             };
             HttpResponseMessage res = await client.SendAsync(req);
             Employee emp = JsonConvert.DeserializeObject<Employee>(await res.Content.ReadAsStringAsync());
+            splash.Close();
             return emp;
         }
     }

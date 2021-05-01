@@ -42,8 +42,9 @@
             this.ButtonPunch.Name = "ButtonPunch";
             this.ButtonPunch.Size = new System.Drawing.Size(75, 23);
             this.ButtonPunch.TabIndex = 0;
-            this.ButtonPunch.Text = "Punch In";
+            this.ButtonPunch.Text = "Punch Out";
             this.ButtonPunch.UseVisualStyleBackColor = true;
+            this.ButtonPunch.Click += new System.EventHandler(this.ButtonPunch_Click);
             // 
             // LabelWelcome
             // 
@@ -62,8 +63,9 @@
             this.ButtonBreak.Name = "ButtonBreak";
             this.ButtonBreak.Size = new System.Drawing.Size(75, 23);
             this.ButtonBreak.TabIndex = 2;
-            this.ButtonBreak.Text = "Break";
+            this.ButtonBreak.Text = "Lunch Out";
             this.ButtonBreak.UseVisualStyleBackColor = true;
+            this.ButtonBreak.Click += new System.EventHandler(this.ButtonBreak_Click);
             // 
             // label1
             // 
@@ -84,16 +86,17 @@
             this.ButtonEmployeeLogout.TabIndex = 4;
             this.ButtonEmployeeLogout.Text = "Log Out";
             this.ButtonEmployeeLogout.UseVisualStyleBackColor = true;
+            this.ButtonEmployeeLogout.Click += new System.EventHandler(this.ButtonEmployeeLogout_Click);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(29)))), ((int)(((byte)(36)))));
-            this.label3.Font = new System.Drawing.Font("Cooper Black", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.SystemColors.Window;
             this.label3.Location = new System.Drawing.Point(172, 23);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(958, 110);
+            this.label3.Size = new System.Drawing.Size(875, 108);
             this.label3.TabIndex = 6;
             this.label3.Text = "Leslie\'s Warehouse";
             // 
@@ -112,7 +115,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FrmEmployee";
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.FrmEmployee_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
