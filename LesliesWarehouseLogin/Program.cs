@@ -15,7 +15,7 @@ namespace LesliesWarehouse
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmAdmin());
+            Application.Run(new FrmLogin());
         }
     }
 }

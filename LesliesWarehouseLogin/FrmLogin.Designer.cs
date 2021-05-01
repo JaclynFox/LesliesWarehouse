@@ -80,11 +80,11 @@
             // 
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(29)))), ((int)(((byte)(36)))));
-            this.label3.Font = new System.Drawing.Font("Cooper Black", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.SystemColors.Window;
             this.label3.Location = new System.Drawing.Point(472, 38);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(958, 110);
+            this.label3.Size = new System.Drawing.Size(875, 108);
             this.label3.TabIndex = 5;
             this.label3.Text = "Leslie\'s Warehouse";
             // 
@@ -107,12 +107,13 @@
             this.button_WOC1.Text = "Log In";
             this.button_WOC1.TextColor = System.Drawing.Color.White;
             this.button_WOC1.UseVisualStyleBackColor = false;
+            this.button_WOC1.Click += new System.EventHandler(this.button_WOC1_Click);
             // 
             // FrmLogin
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(29)))), ((int)(((byte)(36)))));
-            this.ClientSize = new System.Drawing.Size(1920, 1080);
+            this.ClientSize = new System.Drawing.Size(1460, 815);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button_WOC1);
             this.Controls.Add(this.TextBoxPassword);

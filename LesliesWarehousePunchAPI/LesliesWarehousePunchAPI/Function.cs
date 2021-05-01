@@ -92,6 +92,7 @@ namespace LesliesWarehousePunchAPI
                 Dictionary<string, AttributeValue> attrr = new Dictionary<string, AttributeValue>();
                 attrr["empID"] = attr["empID"];
                 attrr["lastPunch"] = new AttributeValue { S = punchDate + " " + punchTime };
+                attrr["punchType"] = new AttributeValue { S = punchType };
                 req = new PutItemRequest(lastPunchTable, attrr);
                 res = await client.PutItemAsync(req);
             }
@@ -109,6 +110,7 @@ namespace LesliesWarehousePunchAPI
             attr["flag"] = new AttributeValue { S = await CheckForFlag(empID, punchType) };
             attrr["empID"] = attr["empID"];
             attrr["lastPunch"] = new AttributeValue { S = datestring[0] + " " + datestring[1] + " " + datestring[2] };
+            attrr["punchType"] = new AttributeValue { S = punchType };
             PutItemRequest req = new PutItemRequest(punchTable, attr);
             PutItemResponse res = await client.PutItemAsync(req);
             req = new PutItemRequest(lastPunchTable, attrr);
@@ -165,32 +167,8 @@ namespace LesliesWarehousePunchAPI
             {
                 { "empID", new AttributeValue {S = empID} }
             });
-            string[] datetimestring = res.Item["lastPunch"].S.Split(' ');
-            QueryResponse qres = await client.QueryAsync(new QueryRequest
-            {
-                TableName = punchTable,
-                KeyConditionExpression = "punchDate = :v_punchDate AND punchTime = :v_punchTime",
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
-                { ":v_punchDate", new AttributeValue { S = datetimestring[0] }},
-                { ":v_punchTime", new AttributeValue { S = datetimestring[1] + " " + datetimestring[2] }}}
-            });
-            if (qres.Items.Count > 0)
-            {
-                PunchRecord pr = new PunchRecord();
-                foreach (Dictionary<string, AttributeValue> i in qres.Items)
-                {
-                    AttributeValue date, time, eID, type, flag;
-                    i.TryGetValue("punchDate", out date);
-                    i.TryGetValue("punchTime", out time);
-                    i.TryGetValue("empID", out eID);
-                    i.TryGetValue("punchType", out type);
-                    i.TryGetValue("flag", out flag);
-                    pr = new PunchRecord(date.S, time.S, eID.S, type.S, flag.S);
-                }
-                return pr;
-            }
-            else
-                return new PunchRecord();
+            string[] datestring = res.Item["lastPunch"].S.Split(' ');
+            return new PunchRecord(datestring[0], datestring[1] + datestring[2], res.Item["empID"].S, res.Item["punchType"].S, "no");
         }
     }
 }
