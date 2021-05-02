@@ -35,6 +35,7 @@
             this.colPunchDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colPunchTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colPunchType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colFlag = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.LabelAdminName = new System.Windows.Forms.Label();
             this.LogoutBtn = new System.Windows.Forms.Button();
             this.DateTimePicker = new System.Windows.Forms.DateTimePicker();
@@ -46,7 +47,6 @@
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.colFlag = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // ButtonAdminRefresh
@@ -69,6 +69,7 @@
             this.ButtonAdminReport.TabIndex = 3;
             this.ButtonAdminReport.Text = "Export To CSV";
             this.ButtonAdminReport.UseVisualStyleBackColor = true;
+            this.ButtonAdminReport.Click += new System.EventHandler(this.ButtonAdminReport_Click);
             // 
             // ListViewEmployeeTime
             // 
@@ -109,6 +110,10 @@
             // 
             this.colPunchType.Text = "Punch Type";
             this.colPunchType.Width = 92;
+            // 
+            // colFlag
+            // 
+            this.colFlag.Text = "Flagged?";
             // 
             // LabelAdminName
             // 
@@ -215,10 +220,6 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(254, 21);
             this.comboBox1.TabIndex = 41;
-            // 
-            // colFlag
-            // 
-            this.colFlag.Text = "Flagged?";
             // 
             // FrmAdmin
             // 

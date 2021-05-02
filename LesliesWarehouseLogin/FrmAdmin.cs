@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace LesliesWarehouse
 {
@@ -141,5 +142,45 @@ namespace LesliesWarehouse
             loginform.Show();
             this.Close();
         }
+
+        List<PunchRecord> pr = new List<PunchRecord>();
+        private async void ButtonAdminReport_Click(object sender, EventArgs e)
+        {
+            List<PunchRecord> punchRecords = new List<PunchRecord>();
+            punchRecords = await RetreivePunches(DateTimePicker.Value);
+            string filepath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\logs\"));
+            string filepath1 = Directory.GetCurrentDirectory();
+            filepath += $"log_{DateTimePicker.Value.ToString("yyyy-MM-dd")}.csv";
+            string delimiter = ",";
+            StringBuilder sb = new StringBuilder();
+            List<string> strings = new List<string>();
+            foreach(PunchRecord element in punchRecords)
+            {
+                string temp = element.PunchDate + delimiter;
+                temp += element.EmpID+ delimiter;
+                temp += element.PunchTime+ delimiter;
+                temp += element.PunchType +delimiter;
+                temp += element.Flag;
+
+                strings.Add(temp);
+                sb.AppendLine(temp);
+            }
+            try
+            {
+                FileStream f = new FileStream(filepath, FileMode.OpenOrCreate);
+                StreamWriter s = new StreamWriter(f);
+                foreach (string element in strings)
+                    s.WriteLine(element);
+                s.Close();
+                /*if (!File.Exists(filepath))
+                    File.AppendText(filepath);
+                File.WriteAllText(filepath, sb.ToString());*/
+                
+
+            }
+            catch(Exception ex) { }
+        }
+
+       
     }
 }
