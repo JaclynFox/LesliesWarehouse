@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Security.Cryptography;
@@ -21,7 +17,11 @@ namespace LesliesWarehouse
         {
             InitializeComponent();
         }
-
+        /*This happens when the login button is clicked (if it were me that designed the form, it would have been called btnLogin for simplicity's sake).
+         * This first validates the loginID and password fields. It then determines if the person whom logged in is an admin or not. If they are an admin
+         * it shows the admin form. If they are an employee, it shows the clock form. In production, we may want to display a form that gives the admin
+         * the option to either display the admin form or punch form since there is currently no way for an admin to punch in other than adding a punch
+         * through the admin form which is a bit obtuse.*/
         private async void button_WOC1_Click(object sender, EventArgs e)
         {
             bool valid = ValidateFields();
@@ -39,6 +39,8 @@ namespace LesliesWarehouse
                     else
                     {
                         PunchRecord pr = await Punch(emp, "get");
+                        /*Checks the type of punch. Automatically punches the employee in or back from lunch depending on the circumstance. Displays appropriate message
+                         * if the employee is automatically punched. This is a measure to eliminate accidental punches.*/
                         switch (pr.PunchType)
                         {
                             case "out":
@@ -63,6 +65,7 @@ namespace LesliesWarehouse
             TextBoxLogin.Text = "";
             TextBoxPassword.Text = "";
         }
+        //Makes sure that something has been entered in both the login and password box. The API handles validation regarding loginID/password combination.
         private bool ValidateFields()
         {
             bool returns = true;
@@ -70,6 +73,9 @@ namespace LesliesWarehouse
                 returns = false;
             return returns;
         }
+        /*This sends the punch request to the API. With how the API handles punches, if a request type falls out of the switch, a punch is added. This is why the 
+         * request type and punch type are the same. In production this works as such: punch types are "in", "out", "lunchout", or "lunchin." A request type of
+         * any of these four will fall out and default to adding a punch.*/
         public async Task<PunchRecord> Punch(Employee emp, string type)
         {
             FrmSplash splash = new FrmSplash();
@@ -88,6 +94,9 @@ namespace LesliesWarehouse
             splash.Close();
             return pr[0];
         }
+        /*This encrypts the password and sends it along with the loginID to the API. The API then checks to see if the loginID/password pair matches. All
+         * passwords are stored in the database encrypted as a 128 byte value that has been converted to base64String for transmittal vial JSON and simplicity.
+         * CSPRNG is not the most secure, we may want to look into using SHA-3.*/
         public async Task<Employee> CheckLogin(string un, string pw)
         {
             FrmSplash splash = new FrmSplash();

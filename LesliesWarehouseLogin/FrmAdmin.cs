@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading.Tasks;
@@ -42,6 +38,7 @@ namespace LesliesWarehouse
         }
         // ----------------------------------------------------------------------------------
 
+        //This method happens when the refresh button is clicked. It sends a request to the punchAPI and gets all punches for a certain date then loads them into the listView
         private async void ButtonAdminRefresh_Click(object sender, EventArgs e)
         {
             List<PunchRecord> punchRecords = new List<PunchRecord>();
@@ -53,6 +50,7 @@ namespace LesliesWarehouse
                 ListViewEmployeeTime.Items.Add(pr.EmpID).SubItems.AddRange(addthis);
             }
         }
+        //This method simply exports the data from the selected record to the fields to the right of the listView.
         private void ListViewEmployeeTime_SelectedIndexChanged(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection items = this.ListViewEmployeeTime.SelectedItems;
@@ -78,6 +76,8 @@ namespace LesliesWarehouse
                 }
             }
         }
+        /*The method that does the actual magic of sending the GET request to the API with a request type of admin and a punchDate of the date selected in the 
+         * datetime picker. The API then returns all punchrecords found for that date.*/
         private async Task<List<PunchRecord>> RetreivePunches(DateTime dt)
         {
             FrmSplash splash = new FrmSplash();
@@ -96,7 +96,8 @@ namespace LesliesWarehouse
             splash.Close();
             return pr;
         }
-
+        /*This simply sends a GET request to the API with proper params to edit a punch. The method then calls the proper method to make all values
+         * in the listView refresh.*/
         private async void ButtonEditPunch_Click(object sender, EventArgs e)
         {
             if (TextBoxEmployeeId.Text != string.Empty && comboBox1.SelectedItem.ToString() != string.Empty)
@@ -136,31 +137,41 @@ namespace LesliesWarehouse
                 ButtonAdminRefresh_Click(this, new EventArgs());
             }
         }
-
+        //Just closes the admin form and shows the login form. The login form is always loaded as it is the startup form and closing it exits the entire program.
         private void LogoutBtn_Click(object sender, EventArgs e)
         {
             loginform.Show();
             this.Close();
         }
-        
+        /*Exports the records in the listView to a CSV file. Calls a method that retreives the name of the employee. This is simply for readability
+         * as the empID is the employee's name and a timestamp. Since this report is mainly for human review, the readability is important. The logic
+         * in the foreach that builds the file saves employee names and empIDs to a dictionary to reduce read requests. In operation this makes it so that
+         * a request is sent only when the name is not already in the dictionary. */
         private async void ButtonAdminReport_Click(object sender, EventArgs e)
         {
             List<PunchRecord> punchRecords = new List<PunchRecord>();
+            List<Employee> employees = new List<Employee>();
+            Dictionary<string, string> names = new Dictionary<string, string>();
+            string name = string.Empty;
             punchRecords = await RetreivePunches(DateTimePicker.Value);
+            FrmSplash splash = new FrmSplash();
+            splash.Show();
             string filepath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\logs\"));
             filepath += $"log_{DateTimePicker.Value.ToString("yyyy-MM-dd")}.csv";
             string delimiter = ",";
-
             List<string> rows = new List<string>();
-            string header = "Punch Date, User ID, Punch Time, Punch Type, Flagged";
+            string header = "Employee Name, Punch Date, Punch Time, Punch Type, Flagged";
             foreach(PunchRecord element in punchRecords)
             {
-                string temp = element.PunchDate + delimiter;
-                temp += element.EmpID + delimiter;
+                if (!names.TryGetValue(element.EmpID, out name))
+                    names.Add(element.EmpID, await QueryEmpName(element.EmpID));
+                names.TryGetValue(element.EmpID, out name);
+                string temp = name + delimiter;
+                temp += element.PunchDate + delimiter;
                 temp += element.PunchTime + delimiter;
                 temp += element.PunchType + delimiter;
                 temp += element.Flag;
-
+                name = string.Empty;
                 rows.Add(temp);
             }
             try
@@ -172,7 +183,25 @@ namespace LesliesWarehouse
                     s.WriteLine(row);
                 s.Close();  
             }
-            catch(Exception ex) { }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error exporting to CSV. Error message below:\n" + ex.Message);
+            }
+            splash.Close();
+        }
+        //Simple method. This just sends a request to the API that gets an Employee object based on the empID it sends.
+        private async Task<string> QueryEmpName(string empID)
+        {
+            string contentString = "{\"request\":\"getName\",\"empID\":\"" + empID + "\"}";
+            HttpRequestMessage req = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("https://nedxc42fj7.execute-api.us-west-2.amazonaws.com/LesliesWarehouseEmployeeManagement"),
+                Content = new StringContent(contentString, Encoding.UTF8, "application/json")
+            };
+            HttpResponseMessage res = await client.SendAsync(req);
+            List<Employee> employees = JsonConvert.DeserializeObject<List<Employee>>(await res.Content.ReadAsStringAsync());
+            return employees[0].Name;
         }
     }
 }

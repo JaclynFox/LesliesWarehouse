@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace LesliesWarehouse
 {
     public partial class FrmSplash : Form
     {
+        //All this is, is a small splash screen that pops up to let the user know when the program is awaiting a response from the API.
         public FrmSplash()
         {
             InitializeComponent();

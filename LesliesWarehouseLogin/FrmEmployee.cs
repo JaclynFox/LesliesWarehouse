@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace LesliesWarehouse
@@ -18,7 +12,7 @@ namespace LesliesWarehouse
             loginform = f;
             LabelWelcome.Text = "Welcome " + loginform.emp.Name;
         }
-
+        //Sends a request to the API that adds a punch to the database. It then displays a goodbye message to let the employee know that they have been logged out.
         private async void ButtonPunch_Click(object sender, EventArgs e)
         {
             await loginform.Punch(loginform.emp, "out");
@@ -26,7 +20,7 @@ namespace LesliesWarehouse
             loginform.Show();
             this.Close();
         }
-
+        //Sends a request to the API that adds a punch to the database. Then displays a message to let the employee know they have been clocked out for lunch.
         private async void ButtonBreak_Click(object sender, EventArgs e)
         {
             await loginform.Punch(loginform.emp, "lunchout");
@@ -34,7 +28,7 @@ namespace LesliesWarehouse
             loginform.Show();
             this.Close();
         }
-
+        //Simply closes this form and shows the login form. Since the login form is the main form, it is always loaded.
         private void ButtonEmployeeLogout_Click(object sender, EventArgs e)
         {
             loginform.Show();

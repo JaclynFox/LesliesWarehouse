@@ -5,6 +5,7 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Amazon.DynamoDBv2.DocumentModel;
 using Newtonsoft.Json;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
@@ -24,27 +25,31 @@ namespace LesliesWarehouseEmployeeManagement
             string del = String.Empty;
             List<Employee> employees = new List<Employee>();
             //This multipart if statement checks whether you are editing, adding, or deleting an employee.
-            if (emp.Request == "put")
-            {
-                await EditEmployee(emp);
+            switch(emp.Request){
+                case "put":
+                    await EditEmployee(emp);
+                    break;
+                /*You'll notice that this just calls the EditEmployee method. The reason for this is that put with 
+                * either edit or add a record, so it doesn't matter much. The only reason you need a different request 
+                * type is because if you're creating a new employee, you need to call the constructor that creates the 
+                * employee's empID field.*/
+                case "new":
+                    await EditEmployee(new Employee(emp.Name, emp.Title, emp.Password, emp.EmpType, emp.LoginID));
+                    break;
+                case "delete":
+                    del = await DeleteEmployee(emp);
+                    break;
+                case "getName":
+                    employees.Add(await QueryEmployee(emp.EmpID));
+                    del = "do not return everyone";
+                    break;
+                default:
+                    del = string.Empty;
+                    break;
             }
-            /*You'll notice that this just calls the EditEmployee method. The reason for this is that put with 
-             * either edit or add a record, so it doesn't matter much. The only reason you need a different request 
-             * type is because if you're creating a new employee, you need to call the constructor that creates the 
-             * employee's empID field.*/
-            else if (emp.Request == "new")
-            {
-                await EditEmployee(new Employee(emp.Name, emp.Title, emp.Password, emp.EmpType, emp.LoginID));
-            }
-            else if (emp.Request == "delete")
-            {
-                del = await DeleteEmployee(emp);
-            }
-            else
-                del = string.Empty;
             if (del == String.Empty || del == "success")
                 employees = await GetEmployees();
-            else
+            else if (del != "do not return everyone")
                 employees.Add(new Employee("Employee not found", null, null, null, null, null));
             return employees;
         }
@@ -103,6 +108,14 @@ namespace LesliesWarehouseEmployeeManagement
                 }
             } while (lastKeyEvaluated != null && lastKeyEvaluated.Count != 0);
             return employees;
+        }
+        private async Task<Employee> QueryEmployee(string empID)
+        {
+            GetItemResponse res = await client.GetItemAsync(tablename, new Dictionary<string, AttributeValue>
+            {
+                { "empID", new AttributeValue {S = empID} }
+            });
+            return JsonConvert.DeserializeObject<Employee>(Document.FromAttributeMap(res.Item).ToJson());
         }
     }
 }
