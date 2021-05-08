@@ -4,9 +4,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Net.Http;
-using System.IO;
-using System.Globalization;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace LesliesWarehouse
 {
@@ -58,8 +57,8 @@ namespace LesliesWarehouse
             foreach (ListViewItem item in items)
             {
                 TextBoxEmployeeId.Text = item.SubItems[0].Text;
-                dateTimePicker1.Value = Convert.ToDateTime(item.SubItems[1].Text, CultureInfo.InvariantCulture);
-                dateTimePicker2.Value = Convert.ToDateTime(item.SubItems[2].Text, CultureInfo.InvariantCulture);
+                dateTimePicker1.Value = Convert.ToDateTime(item.SubItems[1].Text);
+                dateTimePicker2.Value = Convert.ToDateTime(item.SubItems[2].Text);
                 switch (item.SubItems[3].Text)
                 {
                     case "out":
@@ -83,7 +82,7 @@ namespace LesliesWarehouse
         {
             FrmSplash splash = new FrmSplash();
             splash.Show();
-            string datestring = dt.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
+            string datestring = dt.ToString("MM/dd/yyyy");
             string urlstring = "https://56w4zz9yr2.execute-api.us-west-2.amazonaws.com/LoginAndPunch";
             urlstring += "?&request=" + "admin";
             urlstring += "&punchDate=" + datestring;
@@ -93,7 +92,6 @@ namespace LesliesWarehouse
                 RequestUri = new Uri(urlstring)
             };
             HttpResponseMessage res = await client.SendAsync(req);
-            MessageBox.Show(datestring);
             List<PunchRecord> pr = JsonConvert.DeserializeObject<List<PunchRecord>>(await res.Content.ReadAsStringAsync());
             splash.Close();
             return pr;
@@ -124,8 +122,8 @@ namespace LesliesWarehouse
                 }
                 string urlstring = "https://56w4zz9yr2.execute-api.us-west-2.amazonaws.com/LoginAndPunch";
                 urlstring += "?&request=" + "update";
-                urlstring += "&punchDate=" + dateTimePicker1.Value.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
-                urlstring += "&punchTime=" + dateTimePicker2.Value.ToString("hh:mm:ss.fff tt", CultureInfo.InvariantCulture);
+                urlstring += "&punchDate=" + dateTimePicker1.Value.ToString("MM/dd/yyyy");
+                urlstring += "&punchTime=" + dateTimePicker2.Value.ToString("hh:mm:ss.fff tt");
                 urlstring += "&empID=" + TextBoxEmployeeId.Text;
                 urlstring += "&punchType=" + punch;
                 HttpRequestMessage req = new HttpRequestMessage
@@ -159,7 +157,7 @@ namespace LesliesWarehouse
             FrmSplash splash = new FrmSplash();
             splash.Show();
             string filepath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\logs\"));
-            filepath += $"log_{DateTimePicker.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}.csv";
+            filepath += $"log_{DateTimePicker.Value.ToString("yyyy-MM-dd")}.csv";
             string delimiter = ",";
             List<string> rows = new List<string>();
             string header = "Employee Name, Punch Date, Punch Time, Punch Type, Flagged";
